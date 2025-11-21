@@ -10,6 +10,7 @@ import type {
   QueryResultRow,
 } from '../types'
 import { execute, executeAsync } from './execute'
+import type { ExecuteOptions } from '../types'
 import { executeBatch, executeBatchAsync } from './executeBatch'
 import NitroSQLiteError from '../NitroSQLiteError'
 import { closeDatabaseQueue, openDatabaseQueue } from '../DatabaseQueue'
@@ -42,11 +43,14 @@ export function open(
     execute: <Row extends QueryResultRow = never>(
       query: string,
       params?: SQLiteQueryParams,
-    ): QueryResult<Row> => execute(options.name, query, params),
+      execOptions?: ExecuteOptions,
+    ): QueryResult<Row> => execute(options.name, query, params, execOptions),
     executeAsync: <Row extends QueryResultRow = never>(
       query: string,
       params?: SQLiteQueryParams,
-    ): Promise<QueryResult<Row>> => executeAsync(options.name, query, params),
+      execOptions?: ExecuteOptions,
+    ): Promise<QueryResult<Row>> =>
+      executeAsync(options.name, query, params, execOptions),
     executeBatch: (commands: BatchQueryCommand[]) =>
       executeBatch(options.name, commands),
     executeBatchAsync: (commands: BatchQueryCommand[]) =>

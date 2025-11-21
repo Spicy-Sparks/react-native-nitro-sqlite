@@ -75,8 +75,8 @@ namespace margelo::nitro::rnnitrosqlite {
       virtual void drop(const std::string& dbName, const std::optional<std::string>& location) = 0;
       virtual void attach(const std::string& mainDbName, const std::string& dbNameToAttach, const std::string& alias, const std::optional<std::string>& location) = 0;
       virtual void detach(const std::string& mainDbName, const std::string& alias) = 0;
-      virtual std::shared_ptr<margelo::nitro::rnnitrosqlite::HybridNativeQueryResultSpec> execute(const std::string& dbName, const std::string& query, const std::optional<std::vector<std::variant<std::string, double, bool, std::shared_ptr<ArrayBuffer>, SQLiteNullValue>>>& params) = 0;
-      virtual std::shared_ptr<Promise<std::shared_ptr<margelo::nitro::rnnitrosqlite::HybridNativeQueryResultSpec>>> executeAsync(const std::string& dbName, const std::string& query, const std::optional<std::vector<std::variant<std::string, double, bool, std::shared_ptr<ArrayBuffer>, SQLiteNullValue>>>& params) = 0;
+      virtual std::shared_ptr<margelo::nitro::rnnitrosqlite::HybridNativeQueryResultSpec> execute(const std::string& dbName, const std::string& query, const std::optional<std::vector<std::variant<std::string, double, bool, std::shared_ptr<ArrayBuffer>, SQLiteNullValue>>>& params, const std::optional<bool>& ignoreNull) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<margelo::nitro::rnnitrosqlite::HybridNativeQueryResultSpec>>> executeAsync(const std::string& dbName, const std::string& query, const std::optional<std::vector<std::variant<std::string, double, bool, std::shared_ptr<ArrayBuffer>, SQLiteNullValue>>>& params, const std::optional<bool>& ignoreNull) = 0;
       virtual BatchQueryResult executeBatch(const std::string& dbName, const std::vector<NativeBatchQueryCommand>& commands) = 0;
       virtual std::shared_ptr<Promise<BatchQueryResult>> executeBatchAsync(const std::string& dbName, const std::vector<NativeBatchQueryCommand>& commands) = 0;
       virtual FileLoadResult loadFile(const std::string& dbName, const std::string& location) = 0;

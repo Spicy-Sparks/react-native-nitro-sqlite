@@ -23,11 +23,13 @@ export interface NitroSQLite
     dbName: string,
     query: string,
     params?: NativeSQLiteQueryParams,
+    ignoreNull?: boolean,
   ): NativeQueryResult
   executeAsync(
     dbName: string,
     query: string,
     params?: NativeSQLiteQueryParams,
+    ignoreNull?: boolean,
   ): Promise<NativeQueryResult>
   executeBatch(
     dbName: string,

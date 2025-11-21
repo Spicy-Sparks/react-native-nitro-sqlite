@@ -8,12 +8,14 @@ import type {
   SQLiteQueryParams,
   QueryResultRow,
 } from '../types'
+import type { ExecuteOptions } from '../types'
 import NitroSQLiteError from '../NitroSQLiteError'
 
 export function execute<Row extends QueryResultRow = never>(
   dbName: string,
   query: string,
   params?: SQLiteQueryParams,
+  options?: ExecuteOptions,
 ): QueryResult<Row> {
   const transformedParams = isSimpleNullHandlingEnabled()
     ? toNativeQueryParams(params)
@@ -24,6 +26,7 @@ export function execute<Row extends QueryResultRow = never>(
       dbName,
       query,
       transformedParams,
+      options?.ignoreNull,
     )
 
     return buildJsQueryResult<Row>(nativeResult)
@@ -36,6 +39,7 @@ export async function executeAsync<Row extends QueryResultRow = never>(
   dbName: string,
   query: string,
   params?: SQLiteQueryParams,
+  options?: ExecuteOptions,
 ): Promise<QueryResult<Row>> {
   const transformedParams = isSimpleNullHandlingEnabled()
     ? toNativeQueryParams(params)
@@ -46,6 +50,7 @@ export async function executeAsync<Row extends QueryResultRow = never>(
       dbName,
       query,
       transformedParams,
+      options?.ignoreNull,
     )
     return buildJsQueryResult<Row>(nativeResult)
   } catch (error) {

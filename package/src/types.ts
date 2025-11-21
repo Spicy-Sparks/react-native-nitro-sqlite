@@ -67,14 +67,21 @@ export interface QueryResult<Row extends QueryResultRow = QueryResultRow> {
   }
 }
 
+export interface ExecuteOptions {
+  /** If true, SQL NULL column values will be omitted from result rows (native-side). */
+  ignoreNull?: boolean
+}
+
 export type ExecuteQuery = <Row extends QueryResultRow = QueryResultRow>(
   query: string,
   params?: SQLiteQueryParams,
+  options?: ExecuteOptions,
 ) => QueryResult<Row>
 
 export type ExecuteAsyncQuery = <Row extends QueryResultRow = QueryResultRow>(
   query: string,
   params?: SQLiteQueryParams,
+  options?: ExecuteOptions,
 ) => Promise<QueryResult<Row>>
 
 export interface Transaction {

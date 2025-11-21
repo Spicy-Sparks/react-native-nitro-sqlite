@@ -122,7 +122,7 @@ void bindStatement(sqlite3_stmt* statement, const SQLiteQueryParams& values) {
 }
 
 SQLiteExecuteQueryResult sqliteExecute(const std::string& dbName, const std::string& query,
-                                       const std::optional<SQLiteQueryParams>& params) {
+                                       const std::optional<SQLiteQueryParams>& params, bool ignoreNull) {
   if (dbMap.count(dbName) == 0) {
     throw NitroSQLiteException::DatabaseNotOpen(dbName);
   }
@@ -189,9 +189,14 @@ SQLiteExecuteQueryResult sqliteExecute(const std::string& dbName, const std::str
               break;
             }
             case SQLITE_NULL:
-              // Intentionally left blank to switch to default case
+              if (!ignoreNull) {
+                row[column_name] = SQLiteNullValue(true);
+              }
+              break;
             default:
-              row[column_name] = SQLiteNullValue(true);
+              if (!ignoreNull) {
+                row[column_name] = SQLiteNullValue(true);
+              }
               break;
           }
           i++;

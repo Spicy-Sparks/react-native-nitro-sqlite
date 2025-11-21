@@ -7,6 +7,7 @@ import type {
 } from '../types'
 import { execute, executeAsync } from './execute'
 import NitroSQLiteError from '../NitroSQLiteError'
+import type { ExecuteOptions } from '../types'
 
 export const transaction = async <Result = void>(
   dbName: string,
@@ -20,25 +21,27 @@ export const transaction = async <Result = void>(
   const executeOnTransaction = <Row extends QueryResultRow = never>(
     query: string,
     params?: SQLiteQueryParams,
+    options?: ExecuteOptions,
   ): QueryResult<Row> => {
     if (isFinished) {
       throw new NitroSQLiteError(
         `Cannot execute query on finalized transaction: ${dbName}`,
       )
     }
-    return execute(dbName, query, params)
+    return execute(dbName, query, params, options)
   }
 
   const executeAsyncOnTransaction = <Row extends QueryResultRow = never>(
     query: string,
     params?: SQLiteQueryParams,
+    options?: ExecuteOptions,
   ): Promise<QueryResult<Row>> => {
     if (isFinished) {
       throw new NitroSQLiteError(
         `Cannot execute query on finalized transaction: ${dbName}`,
       )
     }
-    return executeAsync(dbName, query, params)
+    return executeAsync(dbName, query, params, options)
   }
 
   const commit = () => {
