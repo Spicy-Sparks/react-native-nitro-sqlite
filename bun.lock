@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "react-native-nitro-sqlite-workspace",
@@ -44,7 +45,7 @@
     },
     "example": {
       "name": "react-native-nitro-sqlite-example",
-      "version": "8.2.2-nitro.1",
+      "version": "9.1.11",
       "dependencies": {
         "@craftzdog/react-native-buffer": "^6.0.5",
         "@react-navigation/native": "^7.1.19",
@@ -56,7 +57,7 @@
         "react": "19.1.1",
         "react-native": "0.82.1",
         "react-native-nitro-modules": "0.27.2",
-        "react-native-nitro-sqlite": "9.1.11",
+        "react-native-nitro-sqlite": "9.2.0",
         "react-native-safe-area-context": "^5.5.2",
         "react-native-screens": "^4.18.0",
         "reflect-metadata": "^0.1.13",
@@ -88,8 +89,8 @@
       },
     },
     "package": {
-      "name": "react-native-nitro-sqlite",
-      "version": "9.1.11",
+      "name": "@javascriptcommon/react-native-nitro-sqlite",
+      "version": "9.2.1",
       "dependencies": {
         "typeorm": "0.3.20",
       },
@@ -406,6 +407,8 @@
     "@istanbuljs/load-nyc-config": ["@istanbuljs/load-nyc-config@1.1.0", "", { "dependencies": { "camelcase": "^5.3.1", "find-up": "^4.1.0", "get-package-type": "^0.1.0", "js-yaml": "^3.13.1", "resolve-from": "^5.0.0" } }, "sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ=="],
 
     "@istanbuljs/schema": ["@istanbuljs/schema@0.1.3", "", {}, "sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA=="],
+
+    "@javascriptcommon/react-native-nitro-sqlite": ["@javascriptcommon/react-native-nitro-sqlite@workspace:package"],
 
     "@jest/console": ["@jest/console@30.2.0", "", { "dependencies": { "@jest/types": "30.2.0", "@types/node": "*", "chalk": "^4.1.2", "jest-message-util": "30.2.0", "jest-util": "30.2.0", "slash": "^3.0.0" } }, "sha512-+O1ifRjkvYIkBqASKWgLxrpEhQAAE7hY77ALLUufSk5717KfOShg6IbqLmdsLMPdUiFvA2kTs0R7YZy+l0IzZQ=="],
 
@@ -1865,7 +1868,7 @@
 
     "react-native-nitro-modules": ["react-native-nitro-modules@0.27.2", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-wHUs6m4e1MkhV7oPMNSZwCZcoaepLNfPScc+Pm9pwgtv26sTADXnu66MzyodSl6kO6TcTC1Pf+5VyQMgesx08w=="],
 
-    "react-native-nitro-sqlite": ["react-native-nitro-sqlite@workspace:package"],
+    "react-native-nitro-sqlite": ["react-native-nitro-sqlite@9.2.0", "", { "dependencies": { "typeorm": "0.3.20" }, "peerDependencies": { "react": ">=17.0.0", "react-native": ">=0.75.0", "react-native-nitro-modules": ">=0.27.2" } }, "sha512-ROWf5ZDiRoU0kF3uaQTY7UNA6gpPNaiNGiOZAMOdY5enAIxX2WpsGeHzO9IuPHdTXqr6QuAmFe7FpoC0+qSRyA=="],
 
     "react-native-nitro-sqlite-example": ["react-native-nitro-sqlite-example@workspace:example"],
 

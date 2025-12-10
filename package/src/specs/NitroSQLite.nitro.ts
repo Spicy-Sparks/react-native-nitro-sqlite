@@ -34,10 +34,12 @@ export interface NitroSQLite
   executeBatch(
     dbName: string,
     commands: NativeBatchQueryCommand[],
+    ignoreNull?: boolean,
   ): BatchQueryResult
   executeBatchAsync(
     dbName: string,
     commands: NativeBatchQueryCommand[],
+    ignoreNull?: boolean,
   ): Promise<BatchQueryResult>
   loadFile(dbName: string, location: string): FileLoadResult
   loadFileAsync(dbName: string, location: string): Promise<FileLoadResult>

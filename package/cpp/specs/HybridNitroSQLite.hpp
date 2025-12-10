@@ -34,9 +34,10 @@ public:
   std::shared_ptr<Promise<std::shared_ptr<HybridNativeQueryResultSpec>>>
   executeAsync(const std::string& dbName, const std::string& query, const std::optional<SQLiteQueryParams>& params, const std::optional<bool>& ignoreNull) override;
 
-  BatchQueryResult executeBatch(const std::string& dbName, const std::vector<NativeBatchQueryCommand>& commands) override;
+  BatchQueryResult executeBatch(const std::string& dbName, const std::vector<NativeBatchQueryCommand>& commands, const std::optional<bool>& ignoreNull) override;
   std::shared_ptr<Promise<BatchQueryResult>> executeBatchAsync(const std::string& dbName,
-                                                               const std::vector<NativeBatchQueryCommand>& commands) override;
+                                                               const std::vector<NativeBatchQueryCommand>& commands,
+                                                               const std::optional<bool>& ignoreNull) override;
 
   FileLoadResult loadFile(const std::string& dbName, const std::string& location) override;
   std::shared_ptr<Promise<FileLoadResult>> loadFileAsync(const std::string& dbName, const std::string& location) override;

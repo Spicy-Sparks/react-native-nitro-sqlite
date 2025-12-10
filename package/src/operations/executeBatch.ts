@@ -13,12 +13,14 @@ import type {
   BatchQueryResult,
   BatchQueryCommand,
   NativeBatchQueryCommand,
+  ExecuteOptions,
 } from '../types'
 import NitroSQLiteError from '../NitroSQLiteError'
 
 export function executeBatch(
   dbName: string,
   commands: BatchQueryCommand[],
+  options?: ExecuteOptions,
 ): BatchQueryResult {
   throwIfDatabaseIsNotOpen(dbName)
 
@@ -28,7 +30,11 @@ export function executeBatch(
 
   try {
     return startOperationSync(dbName, () =>
-      HybridNitroSQLite.executeBatch(dbName, transformedCommands),
+      HybridNitroSQLite.executeBatch(
+        dbName,
+        transformedCommands,
+        options?.ignoreNull,
+      ),
     )
   } catch (error) {
     throw NitroSQLiteError.fromError(error)
@@ -38,6 +44,7 @@ export function executeBatch(
 export async function executeBatchAsync(
   dbName: string,
   commands: BatchQueryCommand[],
+  options?: ExecuteOptions,
 ): Promise<BatchQueryResult> {
   throwIfDatabaseIsNotOpen(dbName)
 
@@ -50,6 +57,7 @@ export async function executeBatchAsync(
       return await HybridNitroSQLite.executeBatchAsync(
         dbName,
         transformedCommands,
+        options?.ignoreNull,
       )
     } catch (error) {
       throw NitroSQLiteError.fromError(error)

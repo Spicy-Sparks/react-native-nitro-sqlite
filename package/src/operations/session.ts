@@ -51,10 +51,12 @@ export function open(
       execOptions?: ExecuteOptions,
     ): Promise<QueryResult<Row>> =>
       executeAsync(options.name, query, params, execOptions),
-    executeBatch: (commands: BatchQueryCommand[]) =>
-      executeBatch(options.name, commands),
-    executeBatchAsync: (commands: BatchQueryCommand[]) =>
-      executeBatchAsync(options.name, commands),
+    executeBatch: (commands: BatchQueryCommand[], execOptions?: ExecuteOptions) =>
+      executeBatch(options.name, commands, execOptions),
+    executeBatchAsync: (
+      commands: BatchQueryCommand[],
+      execOptions?: ExecuteOptions,
+    ) => executeBatchAsync(options.name, commands, execOptions),
     loadFile: (location: string) =>
       HybridNitroSQLite.loadFile(options.name, location),
     loadFileAsync: (location: string) =>

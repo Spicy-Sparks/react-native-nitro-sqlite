@@ -13,8 +13,14 @@ export interface NitroSQLiteConnection {
   ) => Promise<Result>
   execute: ExecuteQuery
   executeAsync: ExecuteAsyncQuery
-  executeBatch(commands: BatchQueryCommand[]): BatchQueryResult
-  executeBatchAsync(commands: BatchQueryCommand[]): Promise<BatchQueryResult>
+  executeBatch(
+    commands: BatchQueryCommand[],
+    options?: ExecuteOptions,
+  ): BatchQueryResult
+  executeBatchAsync(
+    commands: BatchQueryCommand[],
+    options?: ExecuteOptions,
+  ): Promise<BatchQueryResult>
   loadFile(location: string): FileLoadResult
   loadFileAsync(location: string): Promise<FileLoadResult>
 }

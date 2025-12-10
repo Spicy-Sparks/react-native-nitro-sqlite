@@ -32,7 +32,7 @@ std::vector<BatchQuery> batchParamsToCommands(const std::vector<NativeBatchQuery
   return commands;
 }
 
-SQLiteOperationResult sqliteExecuteBatch(const std::string& dbName, const std::vector<BatchQuery>& commands) {
+SQLiteOperationResult sqliteExecuteBatch(const std::string& dbName, const std::vector<BatchQuery>& commands, bool ignoreNull) {
   size_t commandCount = commands.size();
   if (commandCount <= 0) {
     throw NitroSQLiteException(NitroSQLiteExceptionType::NoBatchCommandsProvided, "No SQL batch commands provided");
@@ -48,7 +48,7 @@ SQLiteOperationResult sqliteExecuteBatch(const std::string& dbName, const std::v
       auto results = SQLiteQueryResults();
       auto metadata = std::optional<SQLiteQueryTableMetadata>(std::nullopt);
       try {
-        auto result = sqliteExecute(dbName, command.sql, command.params);
+        auto result = sqliteExecute(dbName, command.sql, command.params, ignoreNull);
         rowsAffected += result.rowsAffected;
       } catch (NitroSQLiteException& e) {
         sqliteExecuteLiteral(dbName, "ROLLBACK");
