@@ -22,12 +22,6 @@ export const NitroSQLite = {
 }
 
 export { open } from './operations/session'
-export {
-  isNitroSQLiteNull,
-  NITRO_SQLITE_NULL,
-  isSimpleNullHandlingEnabled,
-  enableSimpleNullHandling,
-} from './nullHandling'
 export { default as NitroSQLiteError } from './NitroSQLiteError'
 export type * from './types'
 export { typeORMDriver } from './typeORM'

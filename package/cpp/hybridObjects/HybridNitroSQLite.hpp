@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HybridNativeQueryResultSpec.hpp"
+#include "HybridNitroSQLiteQueryResult.hpp"
 #include "HybridNitroSQLiteSpec.hpp"
 #include "types.hpp"
 
@@ -28,15 +28,18 @@ public:
 
   void detach(const std::string& mainDbName, const std::string& alias) override;
 
-  std::shared_ptr<HybridNativeQueryResultSpec> execute(const std::string& dbName, const std::string& query,
-                                                       const std::optional<SQLiteQueryParams>& params, std::optional<bool> ignoreNull) override;
+  std::shared_ptr<HybridNitroSQLiteQueryResultSpec> execute(const std::string& dbName, const std::string& query,
+                                                            const std::optional<SQLiteQueryParams>& params,
+                                                            std::optional<bool> ignoreNull) override;
 
-  std::shared_ptr<Promise<std::shared_ptr<HybridNativeQueryResultSpec>>>
-  executeAsync(const std::string& dbName, const std::string& query, const std::optional<SQLiteQueryParams>& params, std::optional<bool> ignoreNull) override;
+  std::shared_ptr<Promise<std::shared_ptr<HybridNitroSQLiteQueryResultSpec>>>
+  executeAsync(const std::string& dbName, const std::string& query, const std::optional<SQLiteQueryParams>& params,
+               std::optional<bool> ignoreNull) override;
 
-  BatchQueryResult executeBatch(const std::string& dbName, const std::vector<NativeBatchQueryCommand>& commands, std::optional<bool> ignoreNull) override;
+  BatchQueryResult executeBatch(const std::string& dbName, const std::vector<BatchQueryCommand>& commands,
+                               std::optional<bool> ignoreNull) override;
   std::shared_ptr<Promise<BatchQueryResult>> executeBatchAsync(const std::string& dbName,
-                                                               const std::vector<NativeBatchQueryCommand>& commands,
+                                                               const std::vector<BatchQueryCommand>& commands,
                                                                std::optional<bool> ignoreNull) override;
 
   FileLoadResult loadFile(const std::string& dbName, const std::string& location) override;

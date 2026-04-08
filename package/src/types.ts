@@ -1,3 +1,5 @@
+import type { NitroSQLiteQueryResult } from './specs/NitroSQLiteQueryResult.nitro'
+
 export interface NitroSQLiteConnectionOptions {
   name: string
   location?: string
@@ -13,14 +15,8 @@ export interface NitroSQLiteConnection {
   ) => Promise<Result>
   execute: ExecuteQuery
   executeAsync: ExecuteAsyncQuery
-  executeBatch(
-    commands: BatchQueryCommand[],
-    options?: ExecuteOptions,
-  ): BatchQueryResult
-  executeBatchAsync(
-    commands: BatchQueryCommand[],
-    options?: ExecuteOptions,
-  ): Promise<BatchQueryResult>
+  executeBatch(commands: BatchQueryCommand[], options?: ExecuteOptions): BatchQueryResult
+  executeBatchAsync(commands: BatchQueryCommand[], options?: ExecuteOptions): Promise<BatchQueryResult>
   loadFile(location: string): FileLoadResult
   loadFileAsync(location: string): Promise<FileLoadResult>
 }
@@ -34,43 +30,35 @@ export enum ColumnType {
   NULL_VALUE,
 }
 
-// Passing null/undefined in array types is not possible, so we us a special struct as a workaround.
-export type SQLiteNullValue = {
-  isNitroSQLiteNull: true
+export type SQLiteValue = boolean | number | string | ArrayBuffer | null
+
+export type SQLiteQueryParams = SQLiteValue[]
+
+export type QueryResultRow = Record<string, SQLiteValue | undefined>
+
+export interface QueryResult<Row extends QueryResultRow = QueryResultRow>
+  extends NitroSQLiteQueryResult {
+  /** Query results in a row format for TypeORM compatibility */
+  rows: NitroSQLiteQueryResultRows<Row>
 }
-export type SQLiteValue =
-  | boolean
-  | number
-  | string
-  | ArrayBuffer
-  | SQLiteNullValue
 
-/** Used internally to transform the query params into a native format without nullish values */
-export type NativeSQLiteQueryParams = SQLiteValue[]
+export type NitroSQLiteQueryResultRows<
+  Row extends Record<string, SQLiteValue | undefined> = Record<
+    string,
+    SQLiteValue | undefined
+  >,
+> = {
+  /** Raw array with all dataset */
+  _array: Row[]
 
-/**
- * Represents a value that can be stored in a SQLite database
- */
-export type SQLiteQueryParamItem = SQLiteValue | null | undefined
-export type SQLiteQueryParams = SQLiteQueryParamItem[]
+  /** The lengh of the dataset */
+  length: number
 
-export type QueryResultRowItem = SQLiteValue | undefined
-export type QueryResultRow = Record<string, QueryResultRowItem>
-export interface QueryResult<Row extends QueryResultRow = QueryResultRow> {
-  readonly insertId?: number
-  readonly rowsAffected: number
-
-  readonly rows?: {
-    /** Raw array with all dataset */
-    _array: Row[]
-    /** The lengh of the dataset */
-    length: number
-    /** A convenience function to acess the index based the row object
-     * @param idx the row index
-     * @returns the row structure identified by column names
-     */
-    item: (idx: number) => Row | undefined
-  }
+  /** A convenience function to acess the index based the row object
+   * @param idx the row index
+   * @returns the row structure identified by column names
+   */
+  item: (idx: number) => Row | undefined
 }
 
 export interface ExecuteOptions {
@@ -106,14 +94,6 @@ export interface Transaction {
 export interface BatchQueryCommand {
   query: string
   params?: SQLiteQueryParams | SQLiteQueryParams[]
-}
-
-/**
- * Used internally to transform the batch query commands into a native format without nullish values
- */
-export interface NativeBatchQueryCommand {
-  query: string
-  params?: NativeSQLiteQueryParams | NativeSQLiteQueryParams[]
 }
 
 /**

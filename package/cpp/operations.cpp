@@ -1,5 +1,6 @@
 #include "operations.hpp"
 #include "NitroSQLiteException.hpp"
+#include "hybridObjects/HybridNitroSQLiteQueryResult.hpp"
 #include "logs.hpp"
 #include "utils.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
@@ -105,7 +106,7 @@ void bindStatement(sqlite3_stmt* statement, const SQLiteQueryParams& values) {
   for (int valueIndex = 0; valueIndex < values.size(); valueIndex++) {
     int sqliteIndex = valueIndex + 1;
     SQLiteValue value = values.at(valueIndex);
-    if (std::holds_alternative<SQLiteNullValue>(value)) {
+    if (std::holds_alternative<NullType>(value)) {
       sqlite3_bind_null(statement, sqliteIndex);
     } else if (std::holds_alternative<bool>(value)) {
       sqlite3_bind_int(statement, sqliteIndex, std::get<bool>(value));
@@ -121,8 +122,9 @@ void bindStatement(sqlite3_stmt* statement, const SQLiteQueryParams& values) {
   }
 }
 
-SQLiteExecuteQueryResult sqliteExecute(const std::string& dbName, const std::string& query,
-                                       const std::optional<SQLiteQueryParams>& params, bool ignoreNull) {
+std::shared_ptr<HybridNitroSQLiteQueryResult> sqliteExecute(const std::string& dbName, const std::string& query,
+                                                            const std::optional<SQLiteQueryParams>& params,
+                                                            bool ignoreNull) {
   if (dbMap.count(dbName) == 0) {
     throw NitroSQLiteException::DatabaseNotOpen(dbName);
   }
@@ -183,19 +185,25 @@ SQLiteExecuteQueryResult sqliteExecute(const std::string& dbName, const std::str
             case SQLITE_BLOB: {
               int blob_size = sqlite3_column_bytes(statement, i);
               const void* blob = sqlite3_column_blob(statement, i);
-              uint8_t* data = new uint8_t[blob_size];
-              memcpy(data, blob, blob_size);
-              row[column_name] = ArrayBuffer::wrap(data, blob_size, [&data]() -> void { delete[] data; });
+              // Copy the SQLite BLOB into a new native ArrayBuffer.
+              // This avoids manual memory management and unsafe pointer handling.
+              if (blob_size > 0) {
+                const auto* blob_data = reinterpret_cast<const uint8_t*>(blob);
+                row[column_name] = ArrayBuffer::copy(blob_data, static_cast<size_t>(blob_size));
+              } else {
+                // Represent empty BLOBs as an empty, but valid, ArrayBuffer.
+                row[column_name] = ArrayBuffer::allocate(0);
+              }
               break;
             }
             case SQLITE_NULL:
               if (!ignoreNull) {
-                row[column_name] = SQLiteNullValue(true);
+                row[column_name] = NullType::null;
               }
               break;
             default:
               if (!ignoreNull) {
-                row[column_name] = SQLiteNullValue(true);
+                row[column_name] = NullType::null;
               }
               break;
           }
@@ -210,7 +218,7 @@ SQLiteExecuteQueryResult sqliteExecute(const std::string& dbName, const std::str
           column_name = sqlite3_column_name(statement, i);
           const char* tp = sqlite3_column_decltype(statement, i);
           column_declared_type = mapSQLiteTypeToColumnType(tp);
-          auto columnMeta = SQLiteQueryColumnMetadata(std::move(column_name), std::move(column_declared_type), i);
+          auto columnMeta = NitroSQLiteQueryColumnMetadata(std::move(column_name), std::move(column_declared_type), i);
 
           if (!metadata) {
             metadata = std::make_optional<SQLiteQueryTableMetadata>();
@@ -234,10 +242,7 @@ SQLiteExecuteQueryResult sqliteExecute(const std::string& dbName, const std::str
 
   int rowsAffected = sqlite3_changes(db);
   long long latestInsertRowId = sqlite3_last_insert_rowid(db);
-  return {.rowsAffected = rowsAffected,
-          .insertId = static_cast<double>(latestInsertRowId),
-          .results = std::move(results),
-          .metadata = std::move(metadata)};
+  return std::make_shared<HybridNitroSQLiteQueryResult>(results, static_cast<double>(latestInsertRowId), rowsAffected, metadata);
 }
 
 SQLiteOperationResult sqliteExecuteLiteral(const std::string& dbName, const std::string& query) {
