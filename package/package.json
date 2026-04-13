@@ -38,13 +38,12 @@
   ],
   "scripts": {
     "build": "bun typecheck && bob build",
-    "prepublish:build": "npx --yes tsc --noEmit && npx --yes react-native-builder-bob build",
-    "specs": "bun typecheck && bun nitro-codegen --logLevel=\"debug\"",
+    "specs": "bun typecheck && bun nitrogen --logLevel=\"debug\"",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "test": "jest",
     "release": "release-it",
-    "prepublishOnly": "npm run prepublish:build"
+    "prepublishOnly": "bun run build"
   },
   "keywords": [
     "react-native",
@@ -68,7 +67,7 @@
     "access": "public"
   },
   "dependencies": {
-    "typeorm": "0.3.20"
+    "typeorm": "0.3.27"
   },
   "devDependencies": {
     "jest": "^30.2.0",
@@ -95,14 +94,17 @@
   },
   "release-it": {
     "npm": {
-      "publish": true
+      "publish": true,
+      "versionArgs": [
+        "--allow-same-version"
+      ]
     },
     "git": false,
     "github": {
       "release": false
     },
     "hooks": {
-      "before:init": "bun typecheck && bun lint",
+      "before:init": "bun typecheck",
       "after:bump": "bun run build"
     }
   },

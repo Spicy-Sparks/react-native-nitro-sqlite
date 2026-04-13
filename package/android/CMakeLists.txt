@@ -3,15 +3,17 @@ project(RNNitroSQLite)
 
 set (CMAKE_VERBOSE_MAKEFILE ON)
 set (CMAKE_CXX_STANDARD 20)
+set(CMAKE_SUPPRESS_REGENERATION ON)
 
 add_definitions(
   ${SQLITE_FLAGS}
 )
 
-file(GLOB_RECURSE cpp_files RELATIVE ${CMAKE_SOURCE_DIR}
-  "../cpp/**.c"
-  "../cpp/**.cpp"
-  "cpp-adapter.cpp"
+file(GLOB_RECURSE cpp_files
+  CONFIGURE_DEPENDS
+  "${CMAKE_CURRENT_LIST_DIR}/../cpp/*.c"
+  "${CMAKE_CURRENT_LIST_DIR}/../cpp/*.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/cpp-adapter.cpp"
 )
 
 # Create library "RNNitroSQLite" and add all C++ files to it
@@ -24,7 +26,7 @@ include(${CMAKE_SOURCE_DIR}/../nitrogen/generated/android/RNNitroSQLite+autolink
 # Specifies a path to native header files.
 include_directories(
   ../cpp
-  ../cpp/specs
+  ../cpp/hybridObjects
   ../cpp/sqlite
   src/main/cpp
 )

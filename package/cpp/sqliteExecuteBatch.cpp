@@ -8,7 +8,7 @@
 
 namespace margelo::rnnitrosqlite {
 
-std::vector<BatchQuery> batchParamsToCommands(const std::vector<NativeBatchQueryCommand>& batchParams) {
+std::vector<BatchQuery> batchParamsToCommands(const std::vector<BatchQueryCommand>& batchParams) {
   auto commands = std::vector<BatchQuery>();
 
   for (auto& command : batchParams) {
@@ -45,10 +45,8 @@ SQLiteOperationResult sqliteExecuteBatch(const std::string& dbName, const std::v
       const auto command = commands.at(i);
 
       // We do not provide a data structure to receive query data because we don't need/want to handle this results in a batch execution
-      auto results = SQLiteQueryResults();
-      auto metadata = std::optional<SQLiteQueryTableMetadata>(std::nullopt);
       auto result = sqliteExecute(dbName, command.sql, command.params, ignoreNull);
-      rowsAffected += result.rowsAffected;
+      rowsAffected += result->getRowsAffected();
     }
     sqliteExecuteLiteral(dbName, "COMMIT");
     return {
