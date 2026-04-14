@@ -3,14 +3,16 @@ project(RNNitroSQLite)
 
 set (CMAKE_VERBOSE_MAKEFILE ON)
 set (CMAKE_CXX_STANDARD 20)
+set(CMAKE_SUPPRESS_REGENERATION ON)
 
 add_definitions(
   ${SQLITE_FLAGS}
 )
 
-file(GLOB_RECURSE cpp_files RELATIVE ${CMAKE_SOURCE_DIR}
-  "../cpp/**.c"
-  "../cpp/**.cpp"
+file(GLOB_RECURSE cpp_files
+  CONFIGURE_DEPENDS
+  "../cpp/*.c"
+  "../cpp/*.cpp"
   "cpp-adapter.cpp"
 )
 
