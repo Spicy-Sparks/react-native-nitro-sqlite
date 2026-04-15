@@ -120,6 +120,14 @@
         {
           "esm": true
         }
+      ],
+      [
+        "typescript",
+        {
+          "tsc": "../node_modules/.bin/tsc",
+          "project": "tsconfig.build.json",
+          "esm": true
+        }
       ]
     ]
   }
