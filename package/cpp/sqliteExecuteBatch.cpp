@@ -3,6 +3,7 @@
  */
 #include "sqliteExecuteBatch.hpp"
 #include "NitroSQLiteException.hpp"
+#include "logs.hpp"
 #include "operations.hpp"
 #include <utility>
 
@@ -18,7 +19,15 @@ std::vector<BatchQuery> batchParamsToCommands(const std::vector<NativeBatchQuery
 
       if (std::holds_alternative<NestedParamsVec>(*command.params)) {
         // This arguments is an array of arrays, like a batch update of a single sql command.
-        for (const auto& params : std::get<NestedParamsVec>(*command.params)) {
+        const auto& nestedParams = std::get<NestedParamsVec>(*command.params);
+        if (nestedParams.empty()) {
+          LOGW("batchParamsToCommands: query decoded with empty nested params; treating as a single command with zero params. queryLength=%zu",
+               command.query.size());
+          commands.push_back(BatchQuery{command.query, ParamsVec()});
+          continue;
+        }
+
+        for (const auto& params : nestedParams) {
           commands.push_back(BatchQuery{command.query, ParamsVec(params)});
         }
       } else {
@@ -34,7 +43,14 @@ std::vector<BatchQuery> batchParamsToCommands(const std::vector<NativeBatchQuery
 
 SQLiteOperationResult sqliteExecuteBatch(const std::string& dbName, const std::vector<BatchQuery>& commands, bool ignoreNull) {
   size_t commandCount = commands.size();
+  LOGI("sqliteExecuteBatch: db=%s commandCount=%zu ignoreNull=%d", dbName.c_str(), commandCount, ignoreNull ? 1 : 0);
+  for (size_t i = 0; i < commandCount; ++i) {
+    const auto paramsCount = commands[i].params ? commands[i].params->size() : 0;
+    LOGI("sqliteExecuteBatch[%zu]: paramsCount=%zu sql=%s", i, paramsCount, commands[i].sql.c_str());
+  }
+
   if (commandCount <= 0) {
+    LOGE("sqliteExecuteBatch: db=%s throwing NoBatchCommandsProvided because executable commandCount is zero", dbName.c_str());
     throw NitroSQLiteException(NitroSQLiteExceptionType::NoBatchCommandsProvided, "No SQL batch commands provided");
   }
 

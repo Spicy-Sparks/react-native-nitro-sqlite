@@ -78,7 +78,7 @@ function toNativeBatchQueryCommands(
 
     return {
       query: command.query,
-      params: transformedParams,
+      params: transformedParams?.length ? transformedParams : undefined,
     }
   })
 }
