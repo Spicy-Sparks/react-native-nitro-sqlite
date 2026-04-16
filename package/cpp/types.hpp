@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ColumnType.hpp"
-#include "NitroSQLiteQueryColumnMetadata.hpp"
+#include "SQLiteNullValue.hpp"
+#include "SQLiteQueryColumnMetadata.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <string>
 
@@ -10,15 +11,24 @@ using namespace margelo::nitro::rnnitrosqlite;
 
 namespace margelo::rnnitrosqlite {
 
-using SQLiteValue = std::variant<nitro::NullType, bool, std::shared_ptr<ArrayBuffer>, std::string, double>;
+using SQLiteValue = std::variant<bool, std::shared_ptr<ArrayBuffer>, std::string, double, SQLiteNullValue>;
 using SQLiteQueryParams = std::vector<SQLiteValue>;
 using SQLiteQueryResultRow = std::unordered_map<std::string, SQLiteValue>;
 using SQLiteQueryResults = std::vector<SQLiteQueryResultRow>;
-using SQLiteQueryTableMetadata = std::unordered_map<std::string, NitroSQLiteQueryColumnMetadata>;
+using SQLiteQueryTableMetadata = std::unordered_map<std::string, SQLiteQueryColumnMetadata>;
 
 struct SQLiteOperationResult {
   int rowsAffected;
-  int commands = 0;
+  double insertId;
+  int commands;
+};
+
+struct SQLiteExecuteQueryResult {
+  int rowsAffected;
+  double insertId;
+
+  SQLiteQueryResults results;
+  std::optional<SQLiteQueryTableMetadata> metadata;
 };
 
 // constexpr function that maps SQLiteColumnType to string literals

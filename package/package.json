@@ -1,6 +1,6 @@
 {
   "name": "@javascriptcommon/react-native-nitro-sqlite",
-  "version": "9.2.12",
+  "version": "9.2.16",
   "description": "Fast SQLite library for React Native built using Nitro Modules",
   "main": "./lib/module/index",
   "module": "./lib/module/index",
@@ -36,7 +36,7 @@
     "!**/__fixtures__",
     "!**/__mocks__"
   ],
-  "scripts": {
+   "scripts": {
     "build": "bun typecheck && bob build",
     "specs": "bun typecheck && bun nitrogen --logLevel=\"debug\"",
     "typecheck": "tsc --noEmit",
@@ -67,11 +67,11 @@
     "access": "public"
   },
   "dependencies": {
-    "typeorm": "0.3.27"
+    "typeorm": "0.3.20"
   },
   "devDependencies": {
     "jest": "^30.2.0",
-    "nitro-codegen": "0.29.3",
+    "nitrogen": "0.35.0",
     "react": "19.1.1",
     "react-native": "0.82.1",
     "react-native-builder-bob": "^0.31.0",
@@ -94,17 +94,14 @@
   },
   "release-it": {
     "npm": {
-      "publish": true,
-      "versionArgs": [
-        "--allow-same-version"
-      ]
+      "publish": true
     },
     "git": false,
     "github": {
       "release": false
     },
     "hooks": {
-      "before:init": "bun typecheck",
+      "before:init": "bun typecheck && bun lint",
       "after:bump": "bun run build"
     }
   },

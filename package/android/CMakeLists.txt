@@ -11,9 +11,9 @@ add_definitions(
 
 file(GLOB_RECURSE cpp_files
   CONFIGURE_DEPENDS
-  "${CMAKE_CURRENT_LIST_DIR}/../cpp/*.c"
-  "${CMAKE_CURRENT_LIST_DIR}/../cpp/*.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/cpp-adapter.cpp"
+  "../cpp/*.c"
+  "../cpp/*.cpp"
+  "cpp-adapter.cpp"
 )
 
 # Create library "RNNitroSQLite" and add all C++ files to it
@@ -26,7 +26,7 @@ include(${CMAKE_SOURCE_DIR}/../nitrogen/generated/android/RNNitroSQLite+autolink
 # Specifies a path to native header files.
 include_directories(
   ../cpp
-  ../cpp/hybridObjects
+  ../cpp/specs
   ../cpp/sqlite
   src/main/cpp
 )
