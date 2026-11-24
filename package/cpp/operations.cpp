@@ -8,6 +8,7 @@
 #include <ctime>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <optional>
 #include <sqlite3.h>
 #include <sstream>
@@ -26,15 +27,22 @@ void sqliteOpenDb(const std::string& dbName, const std::string& docPath) {
 
   int sqlOpenFlags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX;
 
-  sqlite3* db;
-  int exit = 0;
-  exit = sqlite3_open_v2(dbPath.c_str(), &db, sqlOpenFlags, nullptr);
+  sqlite3* db = nullptr;
+  const int result = sqlite3_open_v2(dbPath.c_str(), &db, sqlOpenFlags, nullptr);
+  std::unique_ptr<sqlite3, decltype(&sqlite3_close_v2)> connection(db, sqlite3_close_v2);
 
-  if (exit != SQLITE_OK) {
-    throw NitroSQLiteException(NitroSQLiteExceptionType::DatabaseCannotBeOpened, sqlite3_errmsg(db));
-  } else {
-    dbMap[dbName] = db;
+  if (result != SQLITE_OK) {
+    const int extended = db ? sqlite3_extended_errcode(db) : result;
+    const int systemError = db ? sqlite3_system_errno(db) : 0;
+    const char* message = db ? sqlite3_errmsg(db) : sqlite3_errstr(result);
+    throw NitroSQLiteException(
+        NitroSQLiteExceptionType::DatabaseCannotBeOpened,
+        std::string(message) + " (sqlite=" + std::to_string(result) +
+            ", extended=" + std::to_string(extended) + ", errno=" + std::to_string(systemError) + ")");
   }
+
+  dbMap[dbName] = connection.get();
+  connection.release();
 }
 
 void sqliteCloseDb(const std::string& dbName) {
